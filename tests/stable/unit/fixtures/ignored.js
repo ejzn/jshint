@@ -11,3 +11,8 @@ function test() {
 function test2() {
 	return a
 }
+
+var node = 'tester';
+
+//jshint -E044
+var node = 'test';

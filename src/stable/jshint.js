@@ -242,6 +242,10 @@ var JSHINT = (function () {
 			return true;
 		}
 
+		if (/^[+-]E\d{3}$/g.test(name)) {
+			return true;
+		}
+
 		if (valOptions[name] === undefined && boolOptions[name] === undefined) {
 			if (t.type !== "jslint") {
 				error("E001", t, name);
@@ -434,6 +438,9 @@ var JSHINT = (function () {
 
 			msg = messages.warnings[code];
 		} else if (/E\d{3}/.test(code)) {
+			if (state.ignored[code])
+				return;
+
 			msg = messages.errors[code];
 		} else if (/I\d{3}/.test(code)) {
 			msg = messages.info[code];
@@ -738,7 +745,7 @@ var JSHINT = (function () {
 					return;
 				}
 
-				var match = /^([+-])(W\d{3})$/g.exec(key);
+				var match = /^([+-])(W\d{3})$/g.exec(key) || /^([+-])(E\d{3})$/g.exec(key);
 				if (match) {
 					// ignore for -W..., unignore for +W...
 					state.ignored[match[2]] = (match[1] === "-");
@@ -4223,7 +4230,7 @@ var JSHINT = (function () {
 
 			optionKeys = Object.keys(o);
 			for (x = 0; x < optionKeys.length; x++) {
-				if (/^-W\d{3}$/g.test(optionKeys[x])) {
+				if (/^-W\d{3}$/g.test(optionKeys[x]) || /^-E\d{3}$/g.test(optionKeys[x])) {
 					newIgnoredObj[optionKeys[x].slice(1)] = true;
 				} else {
 					newOptionObj[optionKeys[x]] = o[optionKeys[x]];
